@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boiler Error Code Database</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>🔧 Boiler Error Code Database</h1>
+                <p class="subtitle">Comprehensive troubleshooting guide for boiler errors</p>
+            </div>
+        </header>
+
+        <!-- Filters -->
+        <div class="filters-section">
+            <div class="filter-group">
+                <label for="makeFilter">Manufacturer</label>
+                <select id="makeFilter" class="filter-select">
+                    <option value="">All Manufacturers</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="modelFilter">Model</label>
+                <select id="modelFilter" class="filter-select">
+                    <option value="">All Models</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="errorCodeFilter">Error Code</label>
+                <input type="text" id="errorCodeFilter" class="filter-input" placeholder="Search error code...">
+            </div>
+
+            <button id="resetFilters" class="reset-btn">Reset Filters</button>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-bar">
+            <div class="stat-item">
+                <span class="stat-label">Total Entries:</span>
+                <span class="stat-value" id="totalEntries">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Showing:</span>
+                <span class="stat-value" id="showingEntries">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Manufacturers:</span>
+                <span class="stat-value" id="totalMakes">0</span>
+            </div>
+        </div>
+
+        <!-- Results -->
+        <div id="resultsContainer" class="results-container">
+            <!-- Error cards will be dynamically inserted here -->
+        </div>
+
+        <!-- Loading State -->
+        <div id="loadingState" class="loading-state">
+            <div class="spinner"></div>
+            <p>Loading error codes...</p>
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="empty-state" style="display: none;">
+            <div class="empty-icon">🔍</div>
+            <h3>No results found</h3>
+            <p>Try adjusting your filters</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boiler Error Code Lookup - Demo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Import the main CSS from the frontend */
+        @import url('./frontend/src/assets/main.css');
+
+        /* Additional demo styles */
+        .demo-notice {
+            background: linear-gradient(135deg, #132257 0%, #1e3a8a 100%);
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        [data-theme="dark"] .demo-notice {
+            background: linear-gradient(135deg, #1BB1E7 0%, #0ea5e9 100%);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="demo-notice">
+        🚀 Standalone Demo - Full Vue.js app available in /frontend directory
+    </div>
+
+    <div id="app">
+        <header class="app-header">
+            <div class="container">
+                <div class="header-content">
+                    <div class="logo">
+                        <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                        </svg>
+                        <span class="logo-text">Boiler Diagnostics</span>
+                    </div>
+                    <button class="theme-toggle" @click="toggleTheme">
+                        <svg v-if="theme === 'light'" class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                        <svg v-else class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="app-main">
+            <div class="container">
+                <div class="search-container">
+                    <div class="hero">
+                        <h1 class="hero-title">Boiler Error Code Lookup</h1>
+                        <p class="hero-subtitle">Professional troubleshooting guide for boiler technicians and
+                            homeowners</p>
+                    </div>
+
+                    <div class="search-filters card card-glass">
+                        <div class="filter-group">
+                            <label for="make-select">Boiler Make</label>
+                            <select id="make-select" v-model="selectedMake" @change="onMakeChange">
+                                <option value="">All Makes</option>
+                                <option v-for="make in uniqueMakes" :key="make" :value="make">{{ make }}</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label for="model-select">Boiler Model</label>
+                            <select id="model-select" v-model="selectedModel" :disabled="!selectedMake">
+                                <option value="">All Models</option>
+                                <option v-for="model in availableModels" :key="model" :value="model">{{ model }}
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label for="code-select">Error Code</label>
+                            <select id="code-select" v-model="selectedErrorCode" :disabled="!selectedMake">
+                                <option value="">All Error Codes</option>
+                                <option v-for="code in availableErrorCodes" :key="code" :value="code">{{ code }}
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="filter-actions">
+                            <button class="btn btn-secondary" @click="clearFilters" :disabled="!hasActiveFilters">
+                                Clear Filters
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="results-section">
+                        <div class="results-header">
+                            <h2 class="results-title">{{ filteredResults.length }} {{ filteredResults.length === 1 ?
+                                'Result' : 'Results' }}</h2>
+                        </div>
+
+                        <div v-if="loading" class="loading-state">
+                            <div class="spinner"></div>
+                            <p>Loading boiler data...</p>
+                        </div>
+
+                        <div v-else-if="filteredResults.length === 0" class="empty-state">
+                            <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <path d="m21 21-4.35-4.35"></path>
+                            </svg>
+                            <h3>No results found</h3>
+                            <p class="text-muted">Try adjusting your filters</p>
+                        </div>
+
+                        <div v-else class="results-grid grid grid-cols-3">
+                            <div v-for="error in filteredResults.slice(0, 12)"
+                                :key="`${error.maker}-${error.model}-${error.error_code}`"
+                                class="error-card card card-glass">
+                                <div class="error-header">
+                                    <div class="error-code-badge">
+                                        <span class="badge badge-primary">{{ error.error_code }}</span>
+                                    </div>
+                                    <div class="error-make-model">
+                                        <h3 class="make">{{ error.maker }}</h3>
+                                        <p class="model text-muted">{{ error.model }}</p>
+                                    </div>
+                                </div>
+                                <div class="error-body">
+                                    <div v-if="error.error_type" class="error-type">
+                                        <span class="label">Type:</span>
+                                        <span class="value">{{ error.error_type }}</span>
+                                    </div>
+                                    <div class="error-cause">
+                                        <span class="label">Cause:</span>
+                                        <p class="value">{{ truncate(error.possible_cause, 120) }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="app-footer">
+            <div class="container">
+                <p class="footer-text text-muted">
+                    Professional boiler error code lookup and troubleshooting guide •
+                    <a href="frontend/README.md" target="_blank">View Full Documentation</a>
+                </p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    theme: 'light',
+                    boilerData: [],
+                    loading: true,
+                    selectedMake: '',
+                    selectedModel: '',
+                    selectedErrorCode: ''
+                }
+            },
+            computed: {
+                uniqueMakes() {
+                    const makes = [...new Set(this.boilerData.map(item => item.maker))];
+                    return makes.filter(Boolean).sort();
+                },
+                availableModels() {
+                    if (!this.selectedMake) return [];
+                    const models = [...new Set(
+                        this.boilerData
+                            .filter(item => item.maker === this.selectedMake)
+                            .map(item => item.model)
+                    )];
+                    return models.filter(Boolean).sort();
+                },
+                availableErrorCodes() {
+                    let filtered = this.boilerData;
+                    if (this.selectedMake) {
+                        filtered = filtered.filter(item => item.maker === this.selectedMake);
+                    }
+                    if (this.selectedModel) {
+                        filtered = filtered.filter(item => item.model === this.selectedModel);
+                    }
+                    const codes = [...new Set(filtered.map(item => item.error_code))];
+                    return codes.filter(Boolean).sort((a, b) => {
+                        const numA = parseInt(a);
+                        const numB = parseInt(b);
+                        if (!isNaN(numA) && !isNaN(numB)) {
+                            return numA - numB;
+                        }
+                        return a.localeCompare(b);
+                    });
+                },
+                filteredResults() {
+                    let filtered = this.boilerData;
+                    if (this.selectedMake) {
+                        filtered = filtered.filter(item => item.maker === this.selectedMake);
+                    }
+                    if (this.selectedModel) {
+                        filtered = filtered.filter(item => item.model === this.selectedModel);
+                    }
+                    if (this.selectedErrorCode) {
+                        filtered = filtered.filter(item => item.error_code === this.selectedErrorCode);
+                    }
+                    return filtered;
+                },
+                hasActiveFilters() {
+                    return this.selectedMake || this.selectedModel || this.selectedErrorCode;
+                }
+            },
+            methods: {
+                async loadData() {
+                    try {
+                        const response = await fetch('./www.freeboilermanuals.com__.2025-11-19T13_43_22.968Z.json');
+                        const data = await response.json();
+                        this.boilerData = data.data.boiler_faults || [];
+                        this.loading = false;
+                    } catch (err) {
+                        console.error('Error loading data:', err);
+                        this.loading = false;
+                    }
+                },
+                toggleTheme() {
+                    this.theme = this.theme === 'light' ? 'dark' : 'light';
+                    document.documentElement.setAttribute('data-theme', this.theme);
+                    localStorage.setItem('theme', this.theme);
+                },
+                onMakeChange() {
+                    this.selectedModel = '';
+                    this.selectedErrorCode = '';
+                },
+                clearFilters() {
+                    this.selectedMake = '';
+                    this.selectedModel = '';
+                    this.selectedErrorCode = '';
+                },
+                truncate(text, length) {
+                    if (!text) return 'No information available';
+                    return text.length > length ? text.substring(0, length) + '...' : text;
+                }
+            },
+            mounted() {
+                // Load theme from localStorage
+                const savedTheme = localStorage.getItem('theme');
+                if (savedTheme) {
+                    this.theme = savedTheme;
+                    document.documentElement.setAttribute('data-theme', this.theme);
+                }
+                this.loadData();
+            }
+        }).mount('#app');
+    </script>
+</body>
+
+</html>

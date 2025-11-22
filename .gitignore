@@ -1,0 +1,13 @@
+.env
+enriched_boiler_data.json
+enriched_boiler_data_progress.json
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
