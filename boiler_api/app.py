@@ -29,26 +29,26 @@ def load_data():
 
 load_data()
 
-@app.route('/')
+@app.route('/', cors=True)
 def index():
     return {'hello': 'world', 'service': 'boiler-api', 'entries': len(BOILER_DATA)}
 
-@app.route('/health')
+@app.route('/health', cors=True)
 def health():
     return {'status': 'ok', 'entries': len(BOILER_DATA)}
 
-@app.route('/makers')
+@app.route('/makers', cors=True)
 def get_makers():
     makers = sorted(list(set(item['maker'] for item in BOILER_DATA if 'maker' in item)))
     return {'makers': makers}
 
-@app.route('/models/{maker}')
+@app.route('/models/{maker}', cors=True)
 def get_models(maker):
     maker = unquote(maker)
     models = sorted(list(set(item['model'] for item in BOILER_DATA if item.get('maker') == maker and 'model' in item)))
     return {'maker': maker, 'models': models}
 
-@app.route('/faults/{maker}/{model}')
+@app.route('/faults/{maker}/{model}', cors=True)
 def get_faults(maker, model):
     maker = unquote(maker)
     model = unquote(model)
@@ -62,7 +62,7 @@ def get_faults(maker, model):
     ]
     return {'maker': maker, 'model': model, 'faults': faults}
 
-@app.route('/fault/{maker}/{model}/{error_code}')
+@app.route('/fault/{maker}/{model}/{error_code}', cors=True)
 def get_fault_detail(maker, model, error_code):
     maker = unquote(maker)
     model = unquote(model)

@@ -79,7 +79,7 @@ export function FaultDashboard({ fault, onBack }: FaultDashboardProps) {
                             </div>
                             <h2 className="text-xl font-bold text-[#132257]">Overview</h2>
                         </div>
-                        <p className="text-slate-600 leading-relaxed text-lg">
+                        <p className="text-slate-600 leading-relaxed text-lg break-words">
                             {fault.ai_overview}
                         </p>
                         {fault.possible_cause && (
@@ -130,7 +130,7 @@ export function FaultDashboard({ fault, onBack }: FaultDashboardProps) {
                                         )}
                                     </div>
                                     <p className={`
-                    text-base leading-relaxed transition-colors
+                    text-base leading-relaxed transition-colors flex-1 min-w-0 break-words
                     ${checkedSteps.has(index) ? 'text-green-800 line-through decoration-green-800/30' : 'text-slate-700'}
                   `}>
                                         {step}
