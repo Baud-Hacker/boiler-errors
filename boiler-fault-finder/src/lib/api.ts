@@ -81,3 +81,15 @@ export async function getFaultDetails(
         return null;
     }
 }
+
+export async function getAllFaults(): Promise<{ maker: string; model: string; error_code: string }[]> {
+    try {
+        const res = await fetch(`${API_URL}/all-faults`);
+        if (!res.ok) throw new Error("Failed to fetch all faults");
+        const data = await res.json();
+        return data.faults || [];
+    } catch (error) {
+        console.error("Error fetching all faults:", error);
+        return [];
+    }
+}

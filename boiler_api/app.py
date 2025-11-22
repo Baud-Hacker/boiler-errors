@@ -80,3 +80,19 @@ def get_fault_detail(maker, model, error_code):
         return Response(body={'error': 'Fault not found'}, status_code=404)
         
     return fault
+
+@app.route('/all-faults', cors=True)
+def get_all_faults():
+    """
+    Returns a lightweight list of all faults for sitemap generation.
+    """
+    all_faults = [
+        {
+            'maker': item.get('maker'),
+            'model': item.get('model'),
+            'error_code': item.get('error_code')
+        }
+        for item in BOILER_DATA
+        if item.get('maker') and item.get('model') and item.get('error_code')
+    ]
+    return {'faults': all_faults}
