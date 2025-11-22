@@ -4,15 +4,15 @@ import { FaultDashboard } from "@/components/Dashboard/FaultDashboard";
 import { notFound } from "next/navigation";
 
 interface Props {
-    params: {
+    params: Promise<{
         maker: string;
         model: string;
         code: string;
-    };
+    }>;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-    const { maker, model, code } = params;
+    const { maker, model, code } = await params;
     const decodedMaker = decodeURIComponent(maker);
     const decodedModel = decodeURIComponent(model);
     const decodedCode = decodeURIComponent(code);
@@ -40,7 +40,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function FaultPage({ params }: Props) {
-    const { maker, model, code } = params;
+    const { maker, model, code } = await params;
     const decodedMaker = decodeURIComponent(maker);
     const decodedModel = decodeURIComponent(model);
     const decodedCode = decodeURIComponent(code);
@@ -70,7 +70,7 @@ export default async function FaultPage({ params }: Props) {
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
             />
-            <FaultDashboard fault={fault} onBack={() => { }} />
+            <FaultDashboard fault={fault} />
         </>
     );
 }

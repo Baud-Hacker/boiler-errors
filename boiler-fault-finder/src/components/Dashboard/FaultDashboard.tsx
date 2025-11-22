@@ -11,15 +11,15 @@ import {
     PlayCircle,
     Wrench
 } from "lucide-react";
+import Link from "next/link";
 import { BoilerFault } from "@/lib/api";
 import { SpursButton } from "../ui/SpursButton";
 
 interface FaultDashboardProps {
     fault: BoilerFault;
-    onBack: () => void;
 }
 
-export function FaultDashboard({ fault, onBack }: FaultDashboardProps) {
+export function FaultDashboard({ fault }: FaultDashboardProps) {
     // Parse troubleshooting steps into an array if it's a string
     // The data has plain text with newlines. We'll try to split by newlines or numbers.
     // For this MVP, let's just split by newlines and filter empty ones.
@@ -56,9 +56,11 @@ export function FaultDashboard({ fault, onBack }: FaultDashboardProps) {
                             Error {fault.error_code}
                         </h1>
                     </div>
-                    <SpursButton variant="outline" size="sm" onClick={onBack}>
-                        New Search
-                    </SpursButton>
+                    <Link href="/">
+                        <SpursButton variant="outline" size="sm">
+                            New Search
+                        </SpursButton>
+                    </Link>
                 </div>
             </motion.div>
 
