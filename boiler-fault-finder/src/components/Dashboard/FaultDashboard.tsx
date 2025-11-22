@@ -17,9 +17,10 @@ import { SpursButton } from "../ui/SpursButton";
 
 interface FaultDashboardProps {
     fault: BoilerFault;
+    breadcrumbs?: React.ReactNode;
 }
 
-export function FaultDashboard({ fault }: FaultDashboardProps) {
+export function FaultDashboard({ fault, breadcrumbs }: FaultDashboardProps) {
     // Parse troubleshooting steps into an array if it's a string
     // The data has plain text with newlines. We'll try to split by newlines or numbers.
     // For this MVP, let's just split by newlines and filter empty ones.
@@ -47,20 +48,27 @@ export function FaultDashboard({ fault }: FaultDashboardProps) {
                 animate={{ y: 0 }}
                 className="sticky top-0 z-40 bg-[#132257] text-white shadow-md"
             >
-                <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-                    <div>
-                        <p className="text-sm text-slate-300 uppercase tracking-wider font-semibold">
-                            {fault.maker} {fault.model}
-                        </p>
-                        <h1 className="text-2xl font-bold text-[#D3D800]">
-                            Error {fault.error_code}
-                        </h1>
+                <div className="max-w-7xl mx-auto px-4 py-4">
+                    <div className="flex items-center justify-between mb-2">
+                        <div>
+                            <p className="text-sm text-slate-300 uppercase tracking-wider font-semibold">
+                                {fault.maker} {fault.model}
+                            </p>
+                            <h1 className="text-2xl font-bold text-[#D3D800]">
+                                Error {fault.error_code}
+                            </h1>
+                        </div>
+                        <Link href="/">
+                            <SpursButton variant="outline" size="sm">
+                                New Search
+                            </SpursButton>
+                        </Link>
                     </div>
-                    <Link href="/">
-                        <SpursButton variant="outline" size="sm">
-                            New Search
-                        </SpursButton>
-                    </Link>
+                    {breadcrumbs && (
+                        <div className="mt-2">
+                            {breadcrumbs}
+                        </div>
+                    )}
                 </div>
             </motion.div>
 

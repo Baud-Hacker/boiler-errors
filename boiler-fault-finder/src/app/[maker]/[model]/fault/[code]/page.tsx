@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import { getFaultDetails } from "@/lib/api";
 import { FaultDashboard } from "@/components/Dashboard/FaultDashboard";
 import { notFound } from "next/navigation";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
 
 interface Props {
     params: Promise<{
@@ -70,7 +71,19 @@ export default async function FaultPage({ params }: Props) {
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
             />
-            <FaultDashboard fault={fault} />
+            <FaultDashboard
+                fault={fault}
+                breadcrumbs={
+                    <Breadcrumbs
+                        theme="dark"
+                        items={[
+                            { label: decodedMaker, href: `/${maker}` },
+                            { label: decodedModel, href: `/${maker}/${model}` },
+                            { label: `Fault ${decodedCode}`, href: `/${maker}/${model}/fault/${code}` }
+                        ]}
+                    />
+                }
+            />
         </>
     );
 }
