@@ -150,21 +150,21 @@ export function HeroSearch({ onSearch }: HeroSearchProps) {
                     {/* MAKE SELECTION */}
                     <div className="relative z-30">
                         <Combobox value={selectedMake} onChange={handleMakeSelect}>
-                            <div className="relative">
+                            <ComboboxButton as="div" className="relative w-full cursor-pointer group">
                                 <ComboboxInput
-                                    className="w-full bg-white/90 border-0 rounded-lg py-4 pl-4 pr-10 text-slate-900 focus:ring-2 focus:ring-[#D3D800] text-lg"
+                                    className="w-full bg-white/90 border-0 rounded-lg py-4 pl-4 pr-10 text-slate-900 focus:ring-2 focus:ring-[#D3D800] text-lg cursor-pointer"
                                     placeholder="Select Boiler Make..."
                                     onChange={(event) => setQueryMake(event.target.value)}
                                     displayValue={(make: string) => make}
                                 />
-                                <ComboboxButton className="absolute inset-y-0 right-0 flex items-center pr-2">
+                                <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
                                     {loadingMakes ? (
                                         <Loader2 className="h-5 w-5 text-slate-500 animate-spin" />
                                     ) : (
                                         <ChevronDown className="h-5 w-5 text-slate-500" aria-hidden="true" />
                                     )}
-                                </ComboboxButton>
-                            </div>
+                                </div>
+                            </ComboboxButton>
                             <ComboboxOptions className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
                                 {filteredMakes.length === 0 && queryMake !== "" ? (
                                     <div className="relative cursor-default select-none py-2 px-4 text-gray-700">
@@ -215,21 +215,21 @@ export function HeroSearch({ onSearch }: HeroSearchProps) {
                                 className="relative z-20"
                             >
                                 <Combobox value={selectedModel} onChange={handleModelSelect}>
-                                    <div className="relative">
+                                    <ComboboxButton as="div" className="relative w-full cursor-pointer group">
                                         <ComboboxInput
-                                            className="w-full bg-white/90 border-0 rounded-lg py-4 pl-4 pr-10 text-slate-900 focus:ring-2 focus:ring-[#D3D800] text-lg"
+                                            className="w-full bg-white/90 border-0 rounded-lg py-4 pl-4 pr-10 text-slate-900 focus:ring-2 focus:ring-[#D3D800] text-lg cursor-pointer"
                                             placeholder="Select Model..."
                                             onChange={(event) => setQueryModel(event.target.value)}
                                             displayValue={(model: string) => model}
                                         />
-                                        <ComboboxButton className="absolute inset-y-0 right-0 flex items-center pr-2">
+                                        <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
                                             {loadingModels ? (
                                                 <Loader2 className="h-5 w-5 text-slate-500 animate-spin" />
                                             ) : (
                                                 <ChevronDown className="h-5 w-5 text-slate-500" aria-hidden="true" />
                                             )}
-                                        </ComboboxButton>
-                                    </div>
+                                        </div>
+                                    </ComboboxButton>
                                     <ComboboxOptions className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
                                         {filteredModels.length === 0 && queryModel !== "" ? (
                                             <div className="relative cursor-default select-none py-2 px-4 text-gray-700">
@@ -282,21 +282,21 @@ export function HeroSearch({ onSearch }: HeroSearchProps) {
                                 className="relative z-10"
                             >
                                 <Combobox value={selectedCode} onChange={handleCodeSelect}>
-                                    <div className="relative">
+                                    <ComboboxButton as="div" className="relative w-full cursor-pointer group">
                                         <ComboboxInput
-                                            className="w-full bg-white/90 border-0 rounded-lg py-4 pl-4 pr-10 text-slate-900 focus:ring-2 focus:ring-[#D3D800] text-lg"
+                                            className="w-full bg-white/90 border-0 rounded-lg py-4 pl-4 pr-10 text-slate-900 focus:ring-2 focus:ring-[#D3D800] text-lg cursor-pointer"
                                             placeholder="Select Fault Code..."
                                             onChange={(event) => setQueryCode(event.target.value)}
                                             displayValue={(code: string) => code}
                                         />
-                                        <ComboboxButton className="absolute inset-y-0 right-0 flex items-center pr-2">
+                                        <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
                                             {loadingCodes ? (
                                                 <Loader2 className="h-5 w-5 text-slate-500 animate-spin" />
                                             ) : (
                                                 <ChevronDown className="h-5 w-5 text-slate-500" aria-hidden="true" />
                                             )}
-                                        </ComboboxButton>
-                                    </div>
+                                        </div>
+                                    </ComboboxButton>
                                     <ComboboxOptions className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
                                         {filteredCodes.length === 0 && queryCode !== "" ? (
                                             <div className="relative cursor-default select-none py-2 px-4 text-gray-700">
