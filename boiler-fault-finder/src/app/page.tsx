@@ -2,15 +2,20 @@
 
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { Loader2 } from "lucide-react";
 import { HeroSearch } from "@/components/HeroSearch";
 import { FaultDashboard } from "@/components/Dashboard/FaultDashboard";
-import { getFaultDetails, BoilerFault } from "@/lib/data";
+import { getFaultDetails, BoilerFault } from "@/lib/api";
 
 export default function Home() {
   const [selectedFault, setSelectedFault] = useState<BoilerFault | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  const handleSearch = (make: string, model: string, code: string) => {
-    const fault = getFaultDetails(make, model, code);
+  const handleSearch = async (make: string, model: string, code: string) => {
+    setLoading(true);
+    const fault = await getFaultDetails(make, model, code);
+    setLoading(false);
+
     if (fault) {
       setSelectedFault(fault);
     } else {
@@ -51,7 +56,13 @@ export default function Home() {
                 </p>
               </div>
 
-              <HeroSearch onSearch={handleSearch} />
+              {loading ? (
+                <div className="flex justify-center items-center h-64">
+                  <Loader2 className="h-12 w-12 text-[#D3D800] animate-spin" />
+                </div>
+              ) : (
+                <HeroSearch onSearch={handleSearch} />
+              )}
             </div>
 
             <footer className="absolute bottom-6 text-slate-500 text-sm">

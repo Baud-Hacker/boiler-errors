@@ -11,7 +11,7 @@ import {
     PlayCircle,
     Wrench
 } from "lucide-react";
-import { BoilerFault } from "@/lib/data";
+import { BoilerFault } from "@/lib/api";
 import { SpursButton } from "../ui/SpursButton";
 
 interface FaultDashboardProps {

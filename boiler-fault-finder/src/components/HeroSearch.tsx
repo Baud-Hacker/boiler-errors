@@ -9,9 +9,9 @@ import {
     ComboboxOptions,
     ComboboxOption
 } from "@headlessui/react";
-import { Check, ChevronDown, Search } from "lucide-react";
+import { Check, ChevronDown, Search, Loader2 } from "lucide-react";
 import { SpursButton } from "./ui/SpursButton";
-import { getMakes, getModels, getFaultCodes } from "@/lib/data";
+import { getMakers, getModels, getFaultCodes } from "@/lib/api";
 import { cn } from "@/lib/utils";
 
 interface HeroSearchProps {
@@ -21,17 +21,66 @@ interface HeroSearchProps {
 export function HeroSearch({ onSearch }: HeroSearchProps) {
     const [step, setStep] = useState<1 | 2 | 3>(1);
 
+    // Data State
+    const [makes, setMakes] = useState<string[]>([]);
+    const [models, setModels] = useState<string[]>([]);
+    const [codes, setCodes] = useState<string[]>([]);
+
+    // Loading State
+    const [loadingMakes, setLoadingMakes] = useState(false);
+    const [loadingModels, setLoadingModels] = useState(false);
+    const [loadingCodes, setLoadingCodes] = useState(false);
+
+    // Selection State
     const [selectedMake, setSelectedMake] = useState("");
     const [selectedModel, setSelectedModel] = useState("");
     const [selectedCode, setSelectedCode] = useState("");
 
+    // Query State
     const [queryMake, setQueryMake] = useState("");
     const [queryModel, setQueryModel] = useState("");
     const [queryCode, setQueryCode] = useState("");
 
-    const makes = getMakes();
-    const models = selectedMake ? getModels(selectedMake) : [];
-    const codes = selectedMake && selectedModel ? getFaultCodes(selectedMake, selectedModel) : [];
+    // Fetch Makers on Mount
+    useEffect(() => {
+        async function fetchMakers() {
+            setLoadingMakes(true);
+            const data = await getMakers();
+            setMakes(data);
+            setLoadingMakes(false);
+        }
+        fetchMakers();
+    }, []);
+
+    // Fetch Models when Make changes
+    useEffect(() => {
+        if (selectedMake) {
+            async function fetchModels() {
+                setLoadingModels(true);
+                const data = await getModels(selectedMake);
+                setModels(data);
+                setLoadingModels(false);
+            }
+            fetchModels();
+        } else {
+            setModels([]);
+        }
+    }, [selectedMake]);
+
+    // Fetch Codes when Model changes
+    useEffect(() => {
+        if (selectedMake && selectedModel) {
+            async function fetchCodes() {
+                setLoadingCodes(true);
+                const data = await getFaultCodes(selectedMake, selectedModel);
+                setCodes(data);
+                setLoadingCodes(false);
+            }
+            fetchCodes();
+        } else {
+            setCodes([]);
+        }
+    }, [selectedMake, selectedModel]);
 
     const filteredMakes =
         queryMake === ""
@@ -60,6 +109,7 @@ export function HeroSearch({ onSearch }: HeroSearchProps) {
             setSelectedModel("");
             setSelectedCode("");
             setStep(2);
+            setQueryMake("");
         }
     };
 
@@ -68,12 +118,14 @@ export function HeroSearch({ onSearch }: HeroSearchProps) {
             setSelectedModel(model);
             setSelectedCode("");
             setStep(3);
+            setQueryModel("");
         }
     };
 
     const handleCodeSelect = (code: string | null) => {
         if (code) {
             setSelectedCode(code);
+            setQueryCode("");
         }
     };
 
@@ -106,7 +158,11 @@ export function HeroSearch({ onSearch }: HeroSearchProps) {
                                     displayValue={(make: string) => make}
                                 />
                                 <ComboboxButton className="absolute inset-y-0 right-0 flex items-center pr-2">
-                                    <ChevronDown className="h-5 w-5 text-slate-500" aria-hidden="true" />
+                                    {loadingMakes ? (
+                                        <Loader2 className="h-5 w-5 text-slate-500 animate-spin" />
+                                    ) : (
+                                        <ChevronDown className="h-5 w-5 text-slate-500" aria-hidden="true" />
+                                    )}
                                 </ComboboxButton>
                             </div>
                             <ComboboxOptions className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
@@ -167,7 +223,11 @@ export function HeroSearch({ onSearch }: HeroSearchProps) {
                                             displayValue={(model: string) => model}
                                         />
                                         <ComboboxButton className="absolute inset-y-0 right-0 flex items-center pr-2">
-                                            <ChevronDown className="h-5 w-5 text-slate-500" aria-hidden="true" />
+                                            {loadingModels ? (
+                                                <Loader2 className="h-5 w-5 text-slate-500 animate-spin" />
+                                            ) : (
+                                                <ChevronDown className="h-5 w-5 text-slate-500" aria-hidden="true" />
+                                            )}
                                         </ComboboxButton>
                                     </div>
                                     <ComboboxOptions className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
@@ -230,7 +290,11 @@ export function HeroSearch({ onSearch }: HeroSearchProps) {
                                             displayValue={(code: string) => code}
                                         />
                                         <ComboboxButton className="absolute inset-y-0 right-0 flex items-center pr-2">
-                                            <ChevronDown className="h-5 w-5 text-slate-500" aria-hidden="true" />
+                                            {loadingCodes ? (
+                                                <Loader2 className="h-5 w-5 text-slate-500 animate-spin" />
+                                            ) : (
+                                                <ChevronDown className="h-5 w-5 text-slate-500" aria-hidden="true" />
+                                            )}
                                         </ComboboxButton>
                                     </div>
                                     <ComboboxOptions className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
