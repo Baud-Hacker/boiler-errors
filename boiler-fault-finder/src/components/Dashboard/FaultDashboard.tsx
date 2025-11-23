@@ -24,7 +24,7 @@ export function FaultDashboard({ fault, breadcrumbs }: FaultDashboardProps) {
     // Parse troubleshooting steps into an array if it's a string
     // The data has plain text with newlines. We'll try to split by newlines or numbers.
     // For this MVP, let's just split by newlines and filter empty ones.
-    const troubleshootingSteps = fault.troubleshooting
+    const troubleshootingSteps = (fault.troubleshooting || "")
         .split('\n')
         .filter(line => line.trim().length > 0);
 
@@ -164,7 +164,7 @@ export function FaultDashboard({ fault, breadcrumbs }: FaultDashboardProps) {
                     >
                         <h3 className="text-lg font-bold text-[#132257] mb-4">Helpful Resources</h3>
                         <div className="space-y-4">
-                            {fault.helpful_resources.length > 0 ? (
+                            {fault.helpful_resources && fault.helpful_resources.length > 0 ? (
                                 fault.helpful_resources.map((resource, idx) => (
                                     <a
                                         key={idx}

@@ -46,7 +46,7 @@ export function HeroSearch({ onSearch }: HeroSearchProps) {
         async function fetchMakers() {
             setLoadingMakes(true);
             const data = await getMakers();
-            setMakes(data);
+            setMakes(Array.from(new Set(data)));
             setLoadingMakes(false);
         }
         fetchMakers();
@@ -58,7 +58,7 @@ export function HeroSearch({ onSearch }: HeroSearchProps) {
             async function fetchModels() {
                 setLoadingModels(true);
                 const data = await getModels(selectedMake);
-                setModels(data);
+                setModels(Array.from(new Set(data)));
                 setLoadingModels(false);
             }
             fetchModels();
@@ -73,7 +73,7 @@ export function HeroSearch({ onSearch }: HeroSearchProps) {
             async function fetchCodes() {
                 setLoadingCodes(true);
                 const data = await getFaultCodes(selectedMake, selectedModel);
-                setCodes(data);
+                setCodes(Array.from(new Set(data)));
                 setLoadingCodes(false);
             }
             fetchCodes();
@@ -165,7 +165,7 @@ export function HeroSearch({ onSearch }: HeroSearchProps) {
                                     )}
                                 </div>
                             </ComboboxButton>
-                            <ComboboxOptions className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                            <ComboboxOptions className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm z-50">
                                 {filteredMakes.length === 0 && queryMake !== "" ? (
                                     <div className="relative cursor-default select-none py-2 px-4 text-gray-700">
                                         Nothing found.
@@ -230,7 +230,7 @@ export function HeroSearch({ onSearch }: HeroSearchProps) {
                                             )}
                                         </div>
                                     </ComboboxButton>
-                                    <ComboboxOptions className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                                    <ComboboxOptions className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm z-50">
                                         {filteredModels.length === 0 && queryModel !== "" ? (
                                             <div className="relative cursor-default select-none py-2 px-4 text-gray-700">
                                                 Nothing found.
@@ -297,7 +297,7 @@ export function HeroSearch({ onSearch }: HeroSearchProps) {
                                             )}
                                         </div>
                                     </ComboboxButton>
-                                    <ComboboxOptions className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                                    <ComboboxOptions className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm z-50">
                                         {filteredCodes.length === 0 && queryCode !== "" ? (
                                             <div className="relative cursor-default select-none py-2 px-4 text-gray-700">
                                                 Nothing found.

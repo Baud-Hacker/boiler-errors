@@ -56,8 +56,9 @@ export async function getFaultCodes(maker: string, model: string): Promise<strin
         if (!res.ok) throw new Error("Failed to fetch fault codes");
         const data = await res.json();
         // The API returns an array of objects { code, description }
-        // We just want the codes for the dropdown
-        return data.faults.map((f: FaultSummary) => f.code) || [];
+        // We just want the codes for the dropdown, ensuring uniqueness
+        const allCodes = data.faults.map((f: FaultSummary) => f.code);
+        return Array.from(new Set(allCodes)) || [];
     } catch (error) {
         console.error(`Error fetching codes for ${maker} ${model}:`, error);
         return [];
