@@ -24,6 +24,8 @@ export const metadata: Metadata = {
     title: "Boiler Fault Finder",
   },
   icons: {
+    icon: "/icon.png",
+    shortcut: "/favicon.png",
     apple: "/apple-touch-icon.png",
   },
 };
