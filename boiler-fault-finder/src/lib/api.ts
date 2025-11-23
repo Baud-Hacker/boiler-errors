@@ -1,4 +1,5 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://lm0kvq8v3k.execute-api.eu-west-2.amazonaws.com/api";
+const API_KEY = process.env.NEXT_PUBLIC_API_KEY || "Clubhouse3-Unweave7-Alabaster9-Hydration8-Deodorant8";
 
 export interface HelpfulResource {
     type: string;
@@ -24,9 +25,19 @@ export interface FaultSummary {
     description: string;
 }
 
+const getHeaders = () => {
+    const headers: HeadersInit = {
+        'Content-Type': 'application/json',
+    };
+    if (API_KEY) {
+        headers['X-API-KEY'] = API_KEY;
+    }
+    return headers;
+};
+
 export async function getMakers(): Promise<string[]> {
     try {
-        const res = await fetch(`${API_URL}/makers`);
+        const res = await fetch(`${API_URL}/makers`, { headers: getHeaders() });
         if (!res.ok) throw new Error("Failed to fetch makers");
         const data = await res.json();
         return data.makers || [];
@@ -38,7 +49,7 @@ export async function getMakers(): Promise<string[]> {
 
 export async function getModels(maker: string): Promise<string[]> {
     try {
-        const res = await fetch(`${API_URL}/models/${encodeURIComponent(maker)}`);
+        const res = await fetch(`${API_URL}/models/${encodeURIComponent(maker)}`, { headers: getHeaders() });
         if (!res.ok) throw new Error("Failed to fetch models");
         const data = await res.json();
         return data.models || [];
@@ -51,7 +62,8 @@ export async function getModels(maker: string): Promise<string[]> {
 export async function getFaultCodes(maker: string, model: string): Promise<string[]> {
     try {
         const res = await fetch(
-            `${API_URL}/faults/${encodeURIComponent(maker)}/${encodeURIComponent(model)}/`
+            `${API_URL}/faults/${encodeURIComponent(maker)}/${encodeURIComponent(model)}/`,
+            { headers: getHeaders() }
         );
         if (!res.ok) throw new Error("Failed to fetch fault codes");
         const data = await res.json();
@@ -72,7 +84,8 @@ export async function getFaultDetails(
 ): Promise<BoilerFault | null> {
     try {
         const res = await fetch(
-            `${API_URL}/fault/${encodeURIComponent(maker)}/${encodeURIComponent(model)}/${encodeURIComponent(code)}`
+            `${API_URL}/fault/${encodeURIComponent(maker)}/${encodeURIComponent(model)}/${encodeURIComponent(code)}`,
+            { headers: getHeaders() }
         );
         if (!res.ok) throw new Error("Failed to fetch fault details");
         const data = await res.json();
@@ -85,7 +98,7 @@ export async function getFaultDetails(
 
 export async function getAllFaults(): Promise<{ maker: string; model: string; error_code: string }[]> {
     try {
-        const res = await fetch(`${API_URL}/all-faults`);
+        const res = await fetch(`${API_URL}/all-faults`, { headers: getHeaders() });
         if (!res.ok) throw new Error("Failed to fetch all faults");
         const data = await res.json();
         return data.faults || [];

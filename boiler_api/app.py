@@ -1,9 +1,17 @@
-from chalice import Chalice, Response
+from chalice import Chalice, Response, CORSConfig
 import json
 import os
 from urllib.parse import unquote
+from functools import wraps
 
 app = Chalice(app_name='boiler_api')
+
+# CORS Configuration
+cors_config = CORSConfig(
+    allow_origin='https://boiler-errors.vercel.app',
+    allow_headers=['Content-Type', 'X-API-KEY', 'Authorization'],
+    max_age=600
+)
 
 # Load data on startup
 DATA_FILE = os.path.join(os.path.dirname(__file__), 'chalicelib', 'enriched_boiler_data.json')
@@ -29,26 +37,49 @@ def load_data():
 
 load_data()
 
-@app.route('/', cors=True)
+def require_api_key(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        api_key = os.environ.get('API_KEY')
+        # If no key configured, allow access (or fail secure? Let's allow for dev if missing, but user wants security)
+        # Actually, let's enforce it if the env var is set.
+        if api_key:
+            request = app.current_request
+            # Check header (case insensitive usually, but Chalice headers are case sensitive in some versions, usually lowercased)
+            # Standardize on 'x-api-key'
+            headers = request.headers or {}
+            request_key = headers.get('x-api-key') or headers.get('X-API-KEY')
+            
+            if request_key != api_key:
+                return Response(body={'error': 'Unauthorized'}, status_code=401)
+        return f(*args, **kwargs)
+    return decorated
+
+@app.route('/', cors=cors_config)
+@require_api_key
 def index():
     return {'hello': 'world', 'service': 'boiler-api', 'entries': len(BOILER_DATA)}
 
-@app.route('/health', cors=True)
+@app.route('/health', cors=cors_config)
+@require_api_key
 def health():
     return {'status': 'ok', 'entries': len(BOILER_DATA)}
 
-@app.route('/makers', cors=True)
+@app.route('/makers', cors=cors_config)
+@require_api_key
 def get_makers():
     makers = sorted(list(set(item['maker'] for item in BOILER_DATA if 'maker' in item)))
     return {'makers': makers}
 
-@app.route('/models/{maker}', cors=True)
+@app.route('/models/{maker}', cors=cors_config)
+@require_api_key
 def get_models(maker):
     maker = unquote(maker)
     models = sorted(list(set(item['model'] for item in BOILER_DATA if item.get('maker') == maker and 'model' in item)))
     return {'maker': maker, 'models': models}
 
-@app.route('/faults/{maker}/{model}', cors=True)
+@app.route('/faults/{maker}/{model}', cors=cors_config)
+@require_api_key
 def get_faults(maker, model):
     maker = unquote(maker)
     model = unquote(model)
@@ -62,7 +93,8 @@ def get_faults(maker, model):
     ]
     return {'maker': maker, 'model': model, 'faults': faults}
 
-@app.route('/fault/{maker}/{model}/{error_code}', cors=True)
+@app.route('/fault/{maker}/{model}/{error_code}', cors=cors_config)
+@require_api_key
 def get_fault_detail(maker, model, error_code):
     maker = unquote(maker)
     model = unquote(model)
@@ -81,10 +113,12 @@ def get_fault_detail(maker, model, error_code):
         
     return fault
 
-@app.route('/all-faults', cors=True)
+
+@app.route('/all-faults', cors=cors_config)
+@require_api_key
 def get_all_faults():
     """
-    Returns a lightweight list of all faults for sitemap generation.
+    Get all faults with basic info for search/indexing.
     """
     all_faults = [
         {
